@@ -16,15 +16,15 @@ data$sizeBin <- NA
 # Spec 5
 # Combined 6
 
-GRAPH <- 4
+GRAPH <- 5
 
 
 
 #Spec graph
 #Set start and end age in MYA
 
-StartAge <- 650 
-EndAge <- 500 
+StartAge <- 450
+EndAge <- 440
 
 
 ###################################################
@@ -45,6 +45,7 @@ BM <- NA
 CM <- NA
 MM <- NA
 TM <- NA
+SpecM <- NA
 
 
 ###################################################
@@ -101,6 +102,12 @@ Tmax <- signif(quantile(data$max_vol,.75,na.rm = TRUE)+1.5*IQR(data$max_vol,na.r
 Tmax <- TM
 }
 
+if(is.na(SpecM)){
+Specmax <- signif(quantile(Spec$max_vol,.75,na.rm = TRUE)+1.5*IQR(Spec$max_vol,na.rm = TRUE),SIG)
+} else {
+Specmax <- SpecM
+}
+
 
 
 # creating size bins for all data ( A , B , C , M , T)
@@ -119,6 +126,9 @@ M$sizeBin[M$max_vol > i*(Mmax/NoB) & M$max_vol <= (i+1)*(Mmax/NoB)] <- i
 }
 for(i in 0:NoB){
 T$sizeBin[T$max_vol > i*(Tmax/NoB) & T$max_vol <= (i+1)*(Tmax/NoB)] <- i
+}
+for(i in 0:NoB){
+Spec$sizeBin[Spec$max_vol > i*(Specmax/NoB) & Spec$max_vol <= (i+1)*(Specmax/NoB)] <- i
 }
 
 
@@ -204,8 +214,9 @@ dev.print(pdf, 'CombinedScaled.pdf')
 }
 
 if(GRAPH == 5){
-LBLSpec <- paste(c('Biovolume (',toString(Tmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Specd,xlab=LBLSpec,ylab='Unique Life Modes',pch = 16,col='Purple',main='Unique Life Modes per Body Size Division Among $#@#$$#@#$ Marine Organism',lwd = thickness)
+LBLSpec <- paste(c('Biovolume (',toString(Specmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
+TITLE <- paste(c('Unique Life Modes per Body Size Division Among All Marine Organism (',StartAge,',',EndAge,') MYA'),collapse = ' ')
+plot(0:NoB,Specd,xlab=LBLSpec,ylab='Unique Life Modes',pch = 16,col='Purple',main=TITLE,lwd = thickness)
 lines(smooth.spline(0:NoB, Specd, spar=0.80),lwd = thickness)
 dev.print(pdf, 'Special.pdf')
 }
