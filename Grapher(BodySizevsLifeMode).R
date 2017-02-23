@@ -8,6 +8,7 @@ data$sizeBin <- NA
 ###################################################
 
 #Graph Settings
+
 # A 0
 # B 1
 # C 2
@@ -16,8 +17,7 @@ data$sizeBin <- NA
 # Spec 5
 # Combined 6
 
-GRAPH <- 5
-
+GRAPH <- 0
 
 
 #Spec graph
@@ -32,7 +32,6 @@ EndAge <- 440
 
 NoB <- 100 #Number of Size Bins
 SIG <- 1 # for rounding the bin size
-
 
 
 ###################################################
@@ -51,6 +50,46 @@ SpecM <- NA
 ###################################################
 
 
+#Graphical Settings
+
+#line thickness
+thickness <- 3
+
+#line smoothing
+smooth <-.35
+
+#plot parameters
+AllScale <- 1
+AxisScale <- 1.5
+LabelScale <- 1.5
+TitleScale <- 1.5
+
+
+#Line colors and dot colors
+
+ACol <- rgb(1,0,0)
+AColLine <- rgb(1,0,0)
+
+BCol <- rgb(0,1,0)
+BColLine <- rgb(0,1,0)
+
+CCol <- rgb(1,0,1)
+CColLine <- rgb(1,0,1)
+
+MCol <- rgb(0,0,1)
+MColLine <- rgb(0,0,1)
+
+TCol <- rgb(1,1,0)
+TColLine <- rgb(1,1,0)
+
+SpecCol <- rgb(1,1,0)
+SpecColLine <- rgb(1,1,0)
+
+
+
+par(pch = 16,lwd = thickness,cex = AllScale,cex.axis = AxisScale,cex.lab = LabelScale,cex.main = TitleScale)
+
+###################################################
 
 
 
@@ -174,50 +213,51 @@ Specd <- cbind(Specd,length(unique(Spec[Spec$sizeBin == i,]$ecospace)))
 
 
 #par(mfrow=c(2,2))
-thickness <- 1
+
 
 #Individual
 
+
 if(GRAPH == 0){
 LBLA <- paste(c('Biovolume (',toString(Amax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Ad,xlab=LBLA,ylab='Unique Life Modes',pch = 16,col='Red',main='Unique Life Modes per Body Size Division Among Arthropods',lwd = thickness)
-lines(smooth.spline(0:NoB, Ad, spar=0.35),lwd = thickness)
+plot(0:NoB,Ad,xlab=LBLA,ylab='Unique Life Modes',col=ACol,main='Unique Life Modes per Body Size Division Among Arthropods')
+lines(smooth.spline(0:NoB, Ad,spar = smooth),col = AColLine)
 dev.print(pdf, 'arthropoda.pdf')
 }
 
 if(GRAPH == 1){
 LBLB <- paste(c('Biovolume (',toString(Bmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Bd,xlab=LBLB,ylab='Unique Life Modes',pch = 16,col='olivedrab4',main='Unique Life Modes per Body Size Division Among Brachiopods',lwd = thickness)
-lines(smooth.spline(0:NoB, Bd, spar=0.35),lwd = thickness)
+plot(0:NoB,Bd,xlab=LBLB,ylab='Unique Life Modes',col = BCol,main='Unique Life Modes per Body Size Division Among Brachiopods')
+lines(smooth.spline(0:NoB, Bd,spar = smooth),col = BColLine)
 dev.print(pdf, 'brachiopoda.pdf')
 }
 
 if(GRAPH == 2){
 LBLC <- paste(c('Biovolume (',toString(Cmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Cd,xlab=LBLC,ylab='Unique Life Modes',pch = 16,col='royalblue',main='Unique Life Modes per Body Size Division Among Chordates',lwd = thickness)
-lines(smooth.spline(0:NoB, Cd, spar=0.35),lwd = thickness)
+plot(0:NoB,Cd,xlab=LBLC,ylab='Unique Life Modes',col = CCol,main='Unique Life Modes per Body Size Division Among Chordates')
+lines(smooth.spline(0:NoB, Cd,spar = smooth),col = CColLine)
 dev.print(pdf, 'chordata.pdf')
 }
 
 if(GRAPH == 3){
 LBLM <- paste(c('Biovolume (',toString(Mmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Md,xlab=LBLM,ylab='Unique Life Modes',pch = 16,col='Purple',main='Unique Life Modes per Body Size Division Among Molluscs',lwd = thickness)
-lines(smooth.spline(0:NoB, Md, spar=0.35),lwd = thickness)
+plot(0:NoB,Md,xlab=LBLM,ylab='Unique Life Modes',col = MCol,main='Unique Life Modes per Body Size Division Among Molluscs')
+lines(smooth.spline(0:NoB, Md,spar = smooth),col = MColLine)
 dev.print(pdf, 'mullusca.pdf')
 }
 
 if(GRAPH == 4){
 LBLT <- paste(c('Biovolume (',toString(Tmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Td,xlab=LBLT,ylab='Unique Life Modes Scaled by Number of Organisms',pch = 16,col='orange',main='Unique Life Modes Scaled by Number of Organisms per Body Size Division Among All',lwd = thickness)
-lines(smooth.spline(0:NoB, Td, spar=0.35),lwd = thickness)
+plot(0:NoB,Td,xlab=LBLT,ylab='Unique Life Modes Scaled by Number of Organisms',col = TCol,main='Unique Life Modes Scaled by Number of Organisms per Body Size Division Among All')
+lines(smooth.spline(0:NoB, Td,spar = smooth),col = TColLine)
 dev.print(pdf, 'CombinedScaled.pdf')
 }
 
 if(GRAPH == 5){
 LBLSpec <- paste(c('Biovolume (',toString(Specmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
 TITLE <- paste(c('Unique Life Modes per Body Size Division Among All Marine Organism (',StartAge,',',EndAge,') MYA'),collapse = ' ')
-plot(0:NoB,Specd,xlab=LBLSpec,ylab='Unique Life Modes',pch = 16,col='Purple',main=TITLE,lwd = thickness)
-lines(smooth.spline(0:NoB, Specd, spar=0.80),lwd = thickness)
+plot(0:NoB,Specd,xlab=LBLSpec,ylab='Unique Life Modes',col = SpecCol,main=TITLE)
+lines(smooth.spline(0:NoB, Specd,spar = smooth),col = SpecColLine)
 dev.print(pdf, 'Special.pdf')
 }
 
@@ -228,17 +268,17 @@ dev.print(pdf, 'Special.pdf')
 
 if(GRAPH == 6){
 LBLCom <- paste(c('Biovolume (',toString(Tmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Ad,xlab=LBLCom,ylab='Unique Life Modes',pch = 18,col='Red',main='Unique Life Modes Per Body Size Division',lwd = thickness)
-lines(smooth.spline(0:NoB, Ad, spar=0.35),col='Red',lwd = thickness)
+plot(0:NoB,Ad,xlab=LBLCom,ylab='Unique Life Modes',col = ACol,main='Unique Life Modes Per Body Size Division')
+lines(smooth.spline(0:NoB, Ad,spar = smooth),col=AColLine)
 
-points(0:NoB,Cd,col='orange',pch = 18,lwd = thickness)
-lines(smooth.spline(0:NoB, Cd,spar=0.35),col='orange',lwd = thickness)
+points(0:NoB,Cd,col=CCol)
+lines(smooth.spline(0:NoB, Cd,spar = smooth),col=CColLine)
 
-points(0:NoB,Md,col='Purple',pch=18,lwd = thickness)
-lines(smooth.spline(0:NoB, Md,spar=0.35),col='Purple',lwd = thickness)
+points(0:NoB,Md,col=MCol)
+lines(smooth.spline(0:NoB, Md,spar = smooth),col=MColLine)
 
-points(0:NoB,Bd,col='Cyan',pch="18",lwd = thickness)
-lines(smooth.spline(0:NoB, Bd,spar=0.35),col='Cyan',lwd = thickness)
+points(0:NoB,Bd,col=BCol)
+lines(smooth.spline(0:NoB, Bd,spar = smooth),col=BColLine)
 
 dev.print(pdf, 'combinedv2.pdf')
 }
