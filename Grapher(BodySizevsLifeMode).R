@@ -15,16 +15,36 @@ data$sizeBin <- NA
 # M 3
 # T 4
 # Spec 5
-# Combined 6
+# Custom 6
 
-GRAPH <- 0
+GRAPH <- 5
 
+######
 
-#Spec graph
+#For SPECIAL GRAPH
 #Set start and end age in MYA
 
-StartAge <- 450
-EndAge <- 440
+StartAge <- 150
+EndAge <- 100
+
+######
+
+# FOR CUSTOM GRAPH
+
+#should data be scaled
+SCALED <- FALSE
+
+#phyla to be used
+#either phyla name or NA for all Phyla
+#multiple names may be used with c(a,b,c) funtion
+#use print(unique(data$phylum)) to see all available Phyla
+
+
+CustomPhyla <- NA
+
+
+CustomStartAge <- 600
+CustomEndAge <- 0
 
 
 ###################################################
@@ -45,6 +65,7 @@ CM <- NA
 MM <- NA
 TM <- NA
 SpecM <- NA
+CustM <- NA
 
 
 ###################################################
@@ -53,10 +74,10 @@ SpecM <- NA
 #Graphical Settings
 
 #line thickness
-thickness <- 3
+thickness <- 5
 
 #line smoothing
-smooth <-.35
+smooth <-.5
 
 #plot parameters
 AllScale <- 1
@@ -68,24 +89,25 @@ TitleScale <- 1.5
 #Line colors and dot colors
 
 ACol <- rgb(1,0,0)
-AColLine <- rgb(1,0,0)
+AColLine <- rgb(.8,0,0)
 
 BCol <- rgb(0,1,0)
-BColLine <- rgb(0,1,0)
+BColLine <- rgb(0,.8,0)
 
 CCol <- rgb(1,0,1)
-CColLine <- rgb(1,0,1)
+CColLine <- rgb(.8,0,.8)
 
 MCol <- rgb(0,0,1)
-MColLine <- rgb(0,0,1)
+MColLine <- rgb(0,0,.8)
 
-TCol <- rgb(1,1,0)
-TColLine <- rgb(1,1,0)
+TCol <- rgb(.5,.5,1)
+TColLine <- rgb(.4,.4,.8)
 
-SpecCol <- rgb(1,1,0)
-SpecColLine <- rgb(1,1,0)
+SpecCol <- rgb(.5,.5,1)
+SpecColLine <- rgb(.4,.4,.8)
 
-
+CustCol <- rgb(0,1,1)
+CustColLine <- rgb(0,.8,.8)
 
 par(pch = 16,lwd = thickness,cex = AllScale,cex.axis = AxisScale,cex.lab = LabelScale,cex.main = TitleScale)
 
@@ -104,12 +126,11 @@ M <- subset(data,data$phylum == 'Mollusca')
 T <- data
 Spec <- subset(data,data$lad_age > EndAge & data$lad_age < StartAge)
 
+Cust <- subset(data,data$lad_age > CustomEndAge & data$lad_age < CustomStartAge)
+if(!(is.na(CustomPhyla))){
+Cust <- subset(data,data$phylum %in% CustomPhyla)
+}
 
-Au <- unique(A$ecospace)
-Bu <- unique(B$ecospace)
-Cu <- unique(C$ecospace)
-Mu <- unique(M$ecospace)
-Tu <- unique(T$ecospace)
 
 if(is.na(AM)){
 Amax <- signif(quantile(A$max_vol,.75,na.rm = TRUE)+1.5*IQR(A$max_vol,na.rm = TRUE),SIG)
@@ -147,58 +168,115 @@ Specmax <- signif(quantile(Spec$max_vol,.75,na.rm = TRUE)+1.5*IQR(Spec$max_vol,n
 Specmax <- SpecM
 }
 
+if(is.na(CustM)){
+Custmax <- signif(quantile(Cust$max_vol,.75,na.rm = TRUE)+1.5*IQR(Cust$max_vol,na.rm = TRUE),SIG)
+} else {
+Custmax <- CustM
+}
 
 
-# creating size bins for all data ( A , B , C , M , T)
 
+# creating size bins for all data ( A , B , C , M , T, Spec, Cust)
+if(GRAPH == 0 || GRAPH == 6){
 for(i in 0:NoB){
 A$sizeBin[A$max_vol > i*(Amax/NoB) & A$max_vol <= (i+1)*(Amax/NoB)] <- i
 }
+}
+
+if(GRAPH == 1 || GRAPH == 6){
 for(i in 0:NoB){
 B$sizeBin[B$max_vol > i*(Bmax/NoB) & B$max_vol <= (i+1)*(Bmax/NoB)] <- i
 }
+}
+
+if(GRAPH == 2 || GRAPH == 6){
 for(i in 0:NoB){
 C$sizeBin[C$max_vol > i*(Cmax/NoB) & C$max_vol <= (i+1)*(Cmax/NoB)] <- i
 }
+}
+
+if(GRAPH == 3 || GRAPH == 6){
 for(i in 0:NoB){
 M$sizeBin[M$max_vol > i*(Mmax/NoB) & M$max_vol <= (i+1)*(Mmax/NoB)] <- i
 }
+}
+
+if(GRAPH == 4){
 for(i in 0:NoB){
 T$sizeBin[T$max_vol > i*(Tmax/NoB) & T$max_vol <= (i+1)*(Tmax/NoB)] <- i
 }
+}
+
+if(GRAPH == 5){
 for(i in 0:NoB){
 Spec$sizeBin[Spec$max_vol > i*(Specmax/NoB) & Spec$max_vol <= (i+1)*(Specmax/NoB)] <- i
+}
+}
+
+if(GRAPH == 6){
+for(i in 0:NoB){
+Cust$sizeBin[Cust$max_vol > i*(Custmax/NoB) & Cust$max_vol <= (i+1)*(Custmax/NoB)] <- i
+}
 }
 
 
 
 
-
+if(GRAPH == 0){
 Ad <- length(unique(A[A$sizeBin == 0,]$ecospace))
 for(i in 1:NoB){
 Ad <- cbind(Ad,length(unique(A[A$sizeBin == i,]$ecospace)))
 }
+}
+
+if(GRAPH == 1){
 Bd <- length(unique(B[B$sizeBin == 0,]$ecospace))
 for(i in 1:NoB){
 Bd <- cbind(Bd,length(unique(B[B$sizeBin == i,]$ecospace)))
 }
+}
+
+if(GRAPH == 2){
 Cd <- length(unique(C[C$sizeBin == 0,]$ecospace))
 for(i in 1:NoB){
 Cd <- cbind(Cd,length(unique(C[C$sizeBin == i,]$ecospace)))
 }
+}
+
+if(GRAPH == 3){
 Md <- length(unique(M[M$sizeBin == 0,]$ecospace))
 for(i in 1:NoB){
 Md <- cbind(Md,length(unique(M[M$sizeBin == i,]$ecospace)))
 }
+}
 
+if(GRAPH == 4){
 Td <-(length(unique(T[T$sizeBin == i,]$ecospace)))/(length(T[T$sizeBin == i,]$ecospace))
 for(i in 1:NoB){
 Td <- cbind(Td,(length(unique(T[T$sizeBin == i,]$ecospace)))/(length(T[T$sizeBin == i,]$ecospace)))
 }
+}
 
+if(GRAPH == 5){
 Specd <- length(unique(Spec[Spec$sizeBin == 0,]$ecospace))
 for(i in 1:NoB){
 Specd <- cbind(Specd,length(unique(Spec[Spec$sizeBin == i,]$ecospace)))
+}
+}
+
+if(GRAPH == 6){
+if(SCALED){
+Custd <-(length(unique(Cust[Cust$sizeBin == i,]$ecospace)))/(length(Cust[Cust$sizeBin == i,]$ecospace))
+} else {
+Custd <- length(unique(Cust[Cust$sizeBin == 0,]$ecospace))
+}
+for(i in 1:NoB){
+if(SCALED){
+Custd <- cbind(Custd,(length(unique(Cust[Cust$sizeBin == i,]$ecospace)))/(length(Cust[Cust$sizeBin == i,]$ecospace)))
+} else {
+Custd <- cbind(Custd,length(unique(Cust[Cust$sizeBin == i,]$ecospace)))
+}
+}
 }
 
 
@@ -206,10 +284,6 @@ Specd <- cbind(Specd,length(unique(Spec[Spec$sizeBin == i,]$ecospace)))
 
 
 #Graphing
-#
-#individual and combined
-#settings above
-
 
 
 #par(mfrow=c(2,2))
@@ -263,25 +337,18 @@ dev.print(pdf, 'Special.pdf')
 
 
 
-
-#Combined
-
 if(GRAPH == 6){
-LBLCom <- paste(c('Biovolume (',toString(Tmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
-plot(0:NoB,Ad,xlab=LBLCom,ylab='Unique Life Modes',col = ACol,main='Unique Life Modes Per Body Size Division')
-lines(smooth.spline(0:NoB, Ad,spar = smooth),col=AColLine)
-
-points(0:NoB,Cd,col=CCol)
-lines(smooth.spline(0:NoB, Cd,spar = smooth),col=CColLine)
-
-points(0:NoB,Md,col=MCol)
-lines(smooth.spline(0:NoB, Md,spar = smooth),col=MColLine)
-
-points(0:NoB,Bd,col=BCol)
-lines(smooth.spline(0:NoB, Bd,spar = smooth),col=BColLine)
-
-dev.print(pdf, 'combinedv2.pdf')
+LBLCust <- paste(c('Biovolume (',toString(Custmax/NoB),' mm^3 multiplied by X value)'),collapse = ' ')
+if(is.na(CustomPhyla)){
+TITLE <- paste(c('Unique Life Modes per Body Size Division Among All Marine Organism (',CustomStartAge,',',CustomEndAge,') MYA'),collapse = ' ')
+} else {
+TITLE <- paste(c('Unique Life Modes per Body Size Division Among', CustomPhyla ,'(',CustomStartAge,',',CustomEndAge,') MYA'),collapse = ' ')
 }
+plot(0:NoB,Custd,xlab=LBLCust,ylab='Unique Life Modes',col = CustCol,main=TITLE)
+lines(smooth.spline(0:NoB, Custd,spar = smooth),col = CustColLine)
+dev.print(pdf, 'Custom.pdf')
+}
+
 
 
 
